@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/nu7hatch/gouuid"
+	"github.com/lonelycode/go-uuid/uuid"
 )
 
 // AuthorizeTokenGenDefault is the default authorization token generator
