@@ -20,7 +20,7 @@ type DefaultClient struct {
 	Id          string
 	Secret      string
 	RedirectUri string
-	UserData    interface{}
+	UserData    interface{} `json:",omitempty"`
 }
 
 func (d *DefaultClient) GetId() string {

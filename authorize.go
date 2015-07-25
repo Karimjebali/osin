@@ -3,6 +3,7 @@ package osin
 import (
 	"net/http"
 	"net/url"
+	"encoding/json"
 	"time"
 )
 
@@ -39,7 +40,7 @@ type AuthorizeRequest struct {
 // Authorization data
 type AuthorizeData struct {
 	// Client information
-	Client Client
+	Client Client `json:",omitempty"`
 
 	// Authorization code
 	Code string
@@ -60,7 +61,58 @@ type AuthorizeData struct {
 	CreatedAt time.Time
 
 	// Data to be passed to storage. Not used by the library.
-	UserData interface{}
+	UserData interface{} `json:",omitempty"`
+}
+
+type authorizeData AuthorizeData
+func (c* AuthorizeData) UnmarshalJSON(b []byte) error {
+	newAuthData := authorizeData{}
+	newAuthData.Client = new(DefaultClient)
+	// var code, scope, redirect, state string
+	// var expires int32
+	// var createdAt time.Time
+	// var userData interface{}
+	var err error
+
+	if err = json.Unmarshal(b, &newAuthData); err == nil {
+		*c = AuthorizeData(newAuthData)
+        return nil
+    }
+
+  //   if err = json.Unmarshal(b, &code); err == nil {
+		// c.Code = code
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &client); err == nil {
+		// c.Client = client
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &expires); err == nil {
+		// c.ExpiresIn = expires
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &scope); err == nil {
+		// c.Scope = scope
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &redirect); err == nil {
+		// c.RedirectUri = redirect
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &state); err == nil {
+		// c.State = state
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &createdAt); err == nil {
+		// c.CreatedAt = createdAt
+  //       return nil
+  //   }
+  //   if err = json.Unmarshal(b, &userData); err == nil {
+		// c.UserData = userData
+  //       return nil
+  //   }
+
+    return nil
 }
 
 // IsExpired is true if authorization expired

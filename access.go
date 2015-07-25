@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"time"
+	"encoding/json"
 )
 
 // AccessRequestType is the type for OAuth param `grant_type`
@@ -22,9 +23,9 @@ const (
 type AccessRequest struct {
 	Type          AccessRequestType
 	Code          string
-	Client        Client
-	AuthorizeData *AuthorizeData
-	AccessData    *AccessData
+	Client        Client `json:",omitempty"`
+	AuthorizeData *AuthorizeData `json:",omitempty"`
+	AccessData    *AccessData `json:",omitempty"`
 
 	// Force finish to use this access data, to allow access data reuse
 	ForceAccessData *AccessData
@@ -54,13 +55,13 @@ type AccessRequest struct {
 // AccessData represents an access grant (tokens, expiration, client, etc)
 type AccessData struct {
 	// Client information
-	Client Client
+	Client Client `json:",omitempty"`
 
 	// Authorize data, for authorization code
-	AuthorizeData *AuthorizeData
+	AuthorizeData *AuthorizeData `json:",omitempty"`
 
 	// Previous access data, for refresh token
-	AccessData *AccessData
+	AccessData *AccessData `json:",omitempty"`
 
 	// Access token
 	AccessToken string
@@ -81,7 +82,20 @@ type AccessData struct {
 	CreatedAt time.Time
 
 	// Data to be passed to storage. Not used by the library.
-	UserData interface{}
+	UserData interface{} `json:",omitempty"`
+}
+
+type accessData AccessData
+func (c* AccessData) UnmarshalJSON(b []byte) error {
+	newAccessData := accessData{}
+	newAccessData.Client = new(DefaultClient)
+	var err error
+
+	if err = json.Unmarshal(b, &newAccessData); err == nil {
+		*c = AccessData(newAccessData)
+        return nil
+    }
+    return nil
 }
 
 // IsExpired returns true if access expired
