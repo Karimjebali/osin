@@ -13,6 +13,9 @@ type Client interface {
 
 	// Data to be passed to storage. Not used by the library.
 	GetUserData() interface{}
+
+	// Data to be passed to storage. Not used by the library.
+	GetPolicyID() string
 }
 
 // DefaultClient stores all data in struct variables
@@ -37,6 +40,10 @@ func (d *DefaultClient) GetRedirectUri() string {
 
 func (d *DefaultClient) GetUserData() interface{} {
 	return d.UserData
+}
+
+func (d *DefaultClient) GetPolicyID() string {
+	return ""
 }
 
 func (d *DefaultClient) CopyFrom(client Client) {

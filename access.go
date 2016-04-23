@@ -1,10 +1,10 @@
 package osin
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"time"
-	"encoding/json"
 )
 
 // AccessRequestType is the type for OAuth param `grant_type`
@@ -23,9 +23,9 @@ const (
 type AccessRequest struct {
 	Type          AccessRequestType
 	Code          string
-	Client        Client `json:",omitempty"`
+	Client        Client         `json:",omitempty"`
 	AuthorizeData *AuthorizeData `json:",omitempty"`
-	AccessData    *AccessData `json:",omitempty"`
+	AccessData    *AccessData    `json:",omitempty"`
 
 	// Force finish to use this access data, to allow access data reuse
 	ForceAccessData *AccessData
@@ -86,16 +86,17 @@ type AccessData struct {
 }
 
 type accessData AccessData
-func (c* AccessData) UnmarshalJSON(b []byte) error {
+
+func (c *AccessData) UnmarshalJSON(b []byte) error {
 	newAccessData := accessData{}
 	newAccessData.Client = new(DefaultClient)
 	var err error
 
 	if err = json.Unmarshal(b, &newAccessData); err == nil {
 		*c = AccessData(newAccessData)
-        return nil
-    }
-    return nil
+		return nil
+	}
+	return nil
 }
 
 // IsExpired returns true if access expired
